@@ -46,11 +46,33 @@ export default function Home() {
     "Technical storytelling that translates complexity into business value",
   ];
 
-  const portfolioSignals = [
-    "Keynotes and conference sessions",
-    "Books, courses, and editorial content",
-    "Strategic advisory and mentoring engagements",
-    "Enterprise transformation case studies",
+  const articles = [
+    { title: "Data-driven innovation: If you want to innovate with data, this is what you should do!", source: "Starburst", date: "Nov 2023", url: "https://www.starburst.io/blog/data-driven-innovation/" },
+    { title: "Artificial intelligence life cycle", source: "Starburst", date: "Nov 2023", url: "https://www.starburst.io/blog/ai-life-cycle/" },
+    { title: "Why data products are critical to ESG", source: "Starburst", date: "Aug 2023", url: "https://www.starburst.io/blog/data-products-esg-environmental-governance/" },
+    { title: "Build great data products and reduce cognitive load", source: "Starburst", date: "2023", url: "https://www.starburst.io/blog/build-great-data-products-and-reduce-cognitive-load/" },
+    { title: "Meeting the Demands of Today's Data-Rich Retail Environment with Data Mesh", source: "Retail Touch Points", date: "May 2022", url: "https://www.retailtouchpoints.com/topics/customer-engagement/meeting-the-demands-of-todays-data-rich-retail-environment-with-data-mesh" },
+    { title: "Driving Faster Insights with a Data Mesh", source: "RTInsights", date: "Jan 2022", url: "https://www.rtinsights.com/driving-faster-insights-with-a-data-mesh/" },
+    { title: "Data Mesh and Starburst: Federated Computational Governance", source: "Starburst", date: "Jan 2022", url: "https://www.starburst.io/blog/data-mesh-and-starburst-federated-computational-governance/" },
+    { title: "Data Mesh and Starburst: Self-Service Data Infrastructure", source: "Starburst", date: "Dec 2021", url: "https://www.starburst.io/blog/data-mesh-starburst-self-service-data-infrastructure/" },
+    { title: "Data Mesh and Starburst: Data as a Product", source: "Starburst", date: "Oct 2021", url: "https://www.starburst.io/blog/data-mesh-and-starburst-data-as-a-product/" },
+    { title: "Data Mesh and Starburst: Domain-oriented Ownership & Architecture", source: "Starburst", date: "Oct 2021", url: "https://www.starburst.io/blog/data-mesh-architecture/" },
+  ];
+
+  const mediumPosts = [
+    { title: "A Collection of Videos", date: "Mar 2026", url: "https://medium.com/@andy-mott/a-collection-of-videos-d197ac2655dc", description: "Talks given over the years collected in one place" },
+    { title: "I Love It When a Plan Comes Together", date: "Jan 2026", url: "https://medium.com/@andy-mott/i-love-it-when-a-plan-comes-together-6cb2f8463498", description: "On networking and unsolicited LinkedIn messages" },
+    { title: "Cycling for Cancer Research", date: "Sep 2025", url: "https://medium.com/@andy-mott/cycling-for-cancer-research-c9c9099c9c7d", description: "Fundraising and charity event reflections" },
+    { title: "AI & Children", date: "Jun 2025", url: "https://medium.com/@andy-mott/ai-children-5801d14d0820", description: "Speaking to a class of 11-year-olds about AI" },
+    { title: "Code Translation", date: "Jun 2025", url: "https://medium.com/@andy-mott/code-translation-3aca8c05411e", description: "Can LLMs really handle code migration? A critical view" },
+    { title: "The Death of the Modern Data Stack?", date: "May 2025", url: "https://medium.com/@andy-mott/the-death-of-the-mds-3938f3d0bf60", description: "The cyclical nature of data infrastructure and what comes next" },
+    { title: "Moving to the Cloud: Why Migrate?", date: "Jan 2025", url: "https://medium.com/@andy-mott/moving-to-the-cloud-15ab05036728", description: "Part 1 of a series on cloud migration benefits" },
+  ];
+
+  const talks = [
+    { title: "The Realities Of Data Mesh – How To Drive Value And Engagement From Your Data Products", event: "Big Data LDN", date: "Sep 2022", url: "https://www.youtube.com/watch?v=bVz9sCc5h9g" },
+    { title: "Is Data Mesh the End of Data Engineering?", event: "Datanova 2023", date: "2023", url: "https://www.starburst.io/resources/is-data-mesh-the-end-of-data-engineering-datanova-2023/" },
+    { title: "Data Products – What Does It Mean for Your Business?", event: "Data Mesh Book Club S2E5", date: "2022", url: "https://www.starburst.io/resources/season-2-episode-5-data-products-what-does-it-mean-for-your-business/" },
   ];
 
   return (
@@ -148,40 +170,78 @@ export default function Home() {
 
           <section className="grid gap-6 md:grid-cols-2">
             <article className="rounded-2xl border border-white/10 bg-zinc-900/60 p-6">
-              <h2 className="text-2xl font-semibold text-white">
-                Thought Leadership
-              </h2>
+              <h2 className="text-2xl font-semibold text-white">Books</h2>
               <p className="mt-3 text-zinc-300">
-                Published author and regular speaker on data mesh, composable
-                architectures, and AI/ML enablement.
+                Published author on data mesh, composable architectures, and AI/ML enablement.
               </p>
               <ul className="mt-4 space-y-2 text-zinc-200">
-                <li>Data Mesh for Dummies</li>
-                <li>Data Products for Dummies</li>
-                <li>Data Virtualization in the Cloud Era</li>
+                <li>AI Data Management for Dummies <span className="text-zinc-500 text-xs">Keboola Special Edition, 2024</span></li>
+                <li>Data Products for Dummies <span className="text-zinc-500 text-xs">2023</span></li>
+                <li>Data Mesh for Dummies <span className="text-zinc-500 text-xs">2022</span></li>
+                <li>Data Virtualization in the Cloud Era <span className="text-zinc-500 text-xs">O'Reilly</span></li>
               </ul>
             </article>
 
-            <article
-              id="portfolio"
-              className="rounded-2xl border border-cyan-300/30 bg-cyan-950/20 p-6"
-            >
-              <h2 className="text-2xl font-semibold text-white">
-                Portfolio (In Progress)
-              </h2>
-              <p className="mt-3 text-zinc-300">
-                This section is designed to grow into a full portfolio of work,
-                with deep dives into strategy, GTM execution, and transformation
-                outcomes.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {portfolioSignals.map((signal) => (
-                  <span
-                    key={signal}
-                    className="rounded-full border border-cyan-200/40 px-3 py-1 text-sm text-cyan-100"
+            <article id="portfolio" className="rounded-2xl border border-white/10 bg-zinc-900/60 p-6">
+              <h2 className="text-2xl font-semibold text-white">Talks &amp; Conference Sessions</h2>
+              <div className="mt-4 space-y-4">
+                {talks.map((talk) => (
+                  <a
+                    key={talk.url}
+                    href={talk.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex flex-col gap-1 rounded-xl border border-white/10 bg-zinc-800/50 p-4 transition hover:border-cyan-300/30 hover:bg-cyan-950/20"
                   >
-                    {signal}
-                  </span>
+                    <span className="text-sm font-medium text-zinc-100 group-hover:text-cyan-200 transition">{talk.title}</span>
+                    <span className="text-xs text-zinc-500">{talk.event} · {talk.date}</span>
+                  </a>
+                ))}
+              </div>
+            </article>
+          </section>
+
+          <section className="grid gap-6 md:grid-cols-2">
+            <article className="rounded-2xl border border-white/10 bg-zinc-900/60 p-6">
+              <h2 className="text-2xl font-semibold text-white">Articles</h2>
+              <p className="mt-1 text-sm text-zinc-400">Published across Starburst, RTInsights, and trade press</p>
+              <div className="mt-4 space-y-2">
+                {articles.map((a) => (
+                  <a
+                    key={a.url}
+                    href={a.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex items-start justify-between gap-3 rounded-xl border border-white/10 bg-zinc-800/50 px-4 py-3 transition hover:border-cyan-300/30 hover:bg-cyan-950/20"
+                  >
+                    <span className="text-sm text-zinc-200 group-hover:text-cyan-200 transition leading-snug">{a.title}</span>
+                    <span className="shrink-0 text-xs text-zinc-500 pt-0.5">{a.date}</span>
+                  </a>
+                ))}
+              </div>
+            </article>
+
+            <article className="rounded-2xl border border-white/10 bg-zinc-900/60 p-6">
+              <h2 className="text-2xl font-semibold text-white">Blog</h2>
+              <p className="mt-1 text-sm text-zinc-400">
+                Personal writing on{" "}
+                <a href="https://medium.com/@andy-mott" target="_blank" rel="noreferrer" className="text-cyan-300/80 hover:text-cyan-200">Medium</a>
+              </p>
+              <div className="mt-4 space-y-2">
+                {mediumPosts.map((post) => (
+                  <a
+                    key={post.url}
+                    href={post.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex flex-col gap-0.5 rounded-xl border border-white/10 bg-zinc-800/50 px-4 py-3 transition hover:border-cyan-300/30 hover:bg-cyan-950/20"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="text-sm font-medium text-zinc-200 group-hover:text-cyan-200 transition leading-snug">{post.title}</span>
+                      <span className="shrink-0 text-xs text-zinc-500 pt-0.5">{post.date}</span>
+                    </div>
+                    <span className="text-xs text-zinc-500">{post.description}</span>
+                  </a>
                 ))}
               </div>
             </article>
