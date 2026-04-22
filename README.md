@@ -1,10 +1,26 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## What this project is
+
+- A professional personal website built with **Next.js App Router** + **Tailwind**.
+- A **Digital Twin** chat widget that answers questions about Andy’s career by calling **OpenRouter** from a server-side API route (`/api/digital-twin`).
+
+## Environment variables
+
+Create a `.env` in the project root (copy from `.env.example`) and set:
+
+- `OPENROUTER_API_KEY`
+
+Optional:
+
+- `SITE_URL` and `SITE_TITLE` (used for OpenRouter request headers)
+
 ## Getting Started
 
 First, run the development server:
 
 ```bash
+npm install
 npm run dev
 # or
 yarn dev
