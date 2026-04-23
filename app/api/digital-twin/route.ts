@@ -244,38 +244,55 @@ export async function POST(req: Request) {
   ];
 
   const { siteUrl, title } = getSiteHeaders();
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), OPENROUTER_TIMEOUT_MS);
   const stream = body.stream === true;
+
+  const openRouterBody = JSON.stringify({
+    model: MODEL,
+    models: [MODEL, ...MODEL_FALLBACKS],
+    messages: safeMessages,
+    temperature: 0.4,
+    max_tokens: 600,
+    stream,
+  });
+
+  const openRouterHeaders = {
+    Authorization: `Bearer ${apiKey}`,
+    "Content-Type": "application/json",
+    "HTTP-Referer": siteUrl,
+    "X-Title": title,
+  };
+
+  // Attempt the request, with one automatic retry after 1s if OpenRouter
+  // returns 429 (upstream rate limit).
+  async function callOpenRouter(): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), OPENROUTER_TIMEOUT_MS);
+    try {
+      return await fetch(OPENROUTER_URL, {
+        method: "POST",
+        signal: controller.signal,
+        headers: openRouterHeaders,
+        body: openRouterBody,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
 
   let res: Response;
   try {
-    res = await fetch(OPENROUTER_URL, {
-      method: "POST",
-      signal: controller.signal,
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": siteUrl,
-        "X-Title": title,
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        models: [MODEL, ...MODEL_FALLBACKS],
-        messages: safeMessages,
-        temperature: 0.4,
-        max_tokens: 600,
-        stream,
-      }),
-    });
+    res = await callOpenRouter();
+    if (res.status === 429) {
+      // Wait 1 second then try once more before giving up.
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      res = await callOpenRouter();
+    }
   } catch (e) {
     const isAbort = e instanceof Error && e.name === "AbortError";
     return Response.json(
       { error: isAbort ? "Model request timed out." : "Model request failed." },
       { status: 502 },
     );
-  } finally {
-    clearTimeout(timeout);
   }
 
   if (!res.ok) {
@@ -283,7 +300,7 @@ export async function POST(req: Request) {
     const isProd = process.env.NODE_ENV === "production";
     return Response.json(
       isProd
-        ? { error: "Upstream model request failed." }
+        ? { error: res.status === 429 ? "The AI service is busy — please try again in a moment." : "Upstream model request failed." }
         : {
             error: "Upstream model request failed.",
             status: res.status,
