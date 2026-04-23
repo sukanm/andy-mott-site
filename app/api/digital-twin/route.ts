@@ -4,10 +4,10 @@ import { DIGITAL_TWIN_CONTEXT } from "@/data/digitalTwinContext";
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
-// Primary model — stable Google free tier. Falls back to the next entry if
-// OpenRouter reports the primary as unavailable (route-level fallback).
-const MODEL = "google/gemma-3-27b-it:free";
-const MODEL_FALLBACKS = ["meta-llama/llama-3.3-8b-instruct:free"];
+// Primary model — Google Gemma 4 31B (free tier, 262k context).
+// Falls back automatically via OpenRouter's model routing if unavailable.
+const MODEL = "google/gemma-4-31b-it:free";
+const MODEL_FALLBACKS = ["nvidia/nemotron-3-super-120b-a12b:free"];
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const MAX_BODY_CHARS = 16_000;
