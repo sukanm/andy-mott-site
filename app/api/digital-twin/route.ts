@@ -361,7 +361,10 @@ export async function POST(req: Request) {
           controllerOut.error("stream_error");
         } finally {
           clearTimeout(timeout);
-          reader.releaseLock();
+          // cancel() closes the underlying HTTP connection to OpenRouter and
+          // releases the lock. releaseLock() alone leaves the connection open,
+          // which keeps the Vercel function alive until the timeout fires.
+          try { await reader.cancel(); } catch { /* already closed */ }
         }
       },
     });
