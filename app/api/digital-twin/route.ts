@@ -246,14 +246,14 @@ export async function POST(req: Request) {
   const { siteUrl, title } = getSiteHeaders();
   const stream = body.stream === true;
 
-  const openRouterBody = JSON.stringify({
+  const openRouterPayload = {
     model: MODEL,
     models: [MODEL, ...MODEL_FALLBACKS],
     messages: safeMessages,
     temperature: 0.4,
     max_tokens: 600,
     stream,
-  });
+  };
 
   const openRouterHeaders = {
     Authorization: `Bearer ${apiKey}`,
@@ -262,32 +262,30 @@ export async function POST(req: Request) {
     "X-Title": title,
   };
 
-  // Attempt the request, with one automatic retry after 1s if OpenRouter
-  // returns 429 (upstream rate limit).
-  async function callOpenRouter(): Promise<Response> {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), OPENROUTER_TIMEOUT_MS);
-    try {
-      return await fetch(OPENROUTER_URL, {
-        method: "POST",
-        signal: controller.signal,
-        headers: openRouterHeaders,
-        body: openRouterBody,
-      });
-    } finally {
-      clearTimeout(timeout);
-    }
+  // AbortController lives in the outer scope so its signal stays alive for
+  // the full request lifecycle, including streaming body reads.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), OPENROUTER_TIMEOUT_MS);
+
+  async function fetchOnce(): Promise<Response> {
+    return fetch(OPENROUTER_URL, {
+      method: "POST",
+      signal: controller.signal,
+      headers: openRouterHeaders,
+      body: JSON.stringify(openRouterPayload),
+    });
   }
 
   let res: Response;
   try {
-    res = await callOpenRouter();
+    res = await fetchOnce();
     if (res.status === 429) {
       // Wait 1 second then try once more before giving up.
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      res = await callOpenRouter();
+      res = await fetchOnce();
     }
   } catch (e) {
+    clearTimeout(timeout);
     const isAbort = e instanceof Error && e.name === "AbortError";
     return Response.json(
       { error: isAbort ? "Model request timed out." : "Model request failed." },
@@ -312,6 +310,7 @@ export async function POST(req: Request) {
 
   if (stream) {
     if (!res.body) {
+      clearTimeout(timeout);
       return Response.json(
         { error: "Streaming unavailable from upstream." },
         { status: 502 },
@@ -339,7 +338,6 @@ export async function POST(req: Request) {
               const parsed = parseSseLine(line);
               if (!parsed) continue;
               if (parsed.done) {
-                controllerOut.enqueue(encoder.encode(""));
                 controllerOut.close();
                 return;
               }
@@ -362,6 +360,7 @@ export async function POST(req: Request) {
         } catch {
           controllerOut.error("stream_error");
         } finally {
+          clearTimeout(timeout);
           reader.releaseLock();
         }
       },
@@ -371,9 +370,13 @@ export async function POST(req: Request) {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-store",
+        // Prevent Vercel / nginx from buffering the streamed chunks.
+        "X-Accel-Buffering": "no",
       },
     });
   }
+
+  clearTimeout(timeout);
 
   const data = (await res.json()) as {
     choices?: Array<{ message?: { content?: string } }>;
