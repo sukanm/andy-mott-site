@@ -154,7 +154,9 @@ export function DigitalTwinChat() {
         const { value, done } = await reader.read();
         if (done) break;
         const delta = decoder.decode(value, { stream: true });
-        if (!delta) continue;
+        // Skip whitespace-only chunks — these are server-side padding sent to
+        // flush Safari's 1024-byte buffer threshold before real tokens arrive.
+        if (!delta.trim()) continue;
         setMessages((prev) => {
           const next = [...prev];
           for (let i = next.length - 1; i >= 0; i--) {
@@ -229,7 +231,7 @@ export function DigitalTwinChat() {
             Copy last answer
           </button>
           <div className="hidden rounded-full border border-cyan-300/25 bg-cyan-950/20 px-3 py-1.5 text-xs text-cyan-200 md:block">
-            google/gemma-4-31b-it:free
+            openrouter/free
           </div>
         </div>
       </div>

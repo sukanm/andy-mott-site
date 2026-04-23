@@ -4,10 +4,10 @@ import { DIGITAL_TWIN_CONTEXT } from "@/data/digitalTwinContext";
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
-// Primary model — Google Gemma 4 31B (free tier, 262k context).
-// Falls back automatically via OpenRouter's model routing if unavailable.
-const MODEL = "google/gemma-4-31b-it:free";
-const MODEL_FALLBACKS = ["nvidia/nemotron-3-super-120b-a12b:free"];
+// openrouter/free auto-routes to the best available free model (lowest
+// latency, highest availability). Gemma 4 is the explicit fallback.
+const MODEL = "openrouter/free";
+const MODEL_FALLBACKS = ["google/gemma-4-26b-a4b-it:free"];
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const MAX_BODY_CHARS = 16_000;
@@ -322,6 +322,12 @@ export async function POST(req: Request) {
 
     const out = new ReadableStream<Uint8Array>({
       async start(controllerOut) {
+        // Safari/WebKit buffers fetch streams until 1024 bytes are received
+        // before delivering any chunks to the page. Send silent padding first
+        // so tokens appear immediately rather than in one delayed burst.
+        // The client strips whitespace-only chunks so this is invisible.
+        controllerOut.enqueue(encoder.encode(" ".repeat(1025)));
+
         const reader = res.body!.getReader();
         let buffer = "";
 
