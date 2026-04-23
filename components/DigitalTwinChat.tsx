@@ -229,7 +229,7 @@ export function DigitalTwinChat() {
             Copy last answer
           </button>
           <div className="hidden rounded-full border border-cyan-300/25 bg-cyan-950/20 px-3 py-1.5 text-xs text-cyan-200 md:block">
-            arcee-ai/trinity-large-preview:free
+            google/gemma-3-27b-it:free
           </div>
         </div>
       </div>

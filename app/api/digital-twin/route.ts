@@ -4,7 +4,10 @@ import { DIGITAL_TWIN_CONTEXT } from "@/data/digitalTwinContext";
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
-const MODEL = "arcee-ai/trinity-large-preview:free";
+// Primary model — stable Google free tier. Falls back to the next entry if
+// OpenRouter reports the primary as unavailable (route-level fallback).
+const MODEL = "google/gemma-3-27b-it:free";
+const MODEL_FALLBACKS = ["meta-llama/llama-3.3-8b-instruct:free"];
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const MAX_BODY_CHARS = 16_000;
@@ -258,6 +261,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model: MODEL,
+        models: [MODEL, ...MODEL_FALLBACKS],
         messages: safeMessages,
         temperature: 0.4,
         max_tokens: 600,
